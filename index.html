@@ -77,18 +77,9 @@
     }
 
     .hero-logo {
-      /*
-       * TODO — Remplacer par le vrai asset SVG :
-       * <img src="assets/kafe-wordmark.svg" alt="Kafé" class="hero-logo">
-       */
-      font-family: var(--f-display);
-      font-weight: 900;
-      font-size: clamp(88px, 26vw, 260px);
-      line-height: 0.85;
-      letter-spacing: -0.04em;
-      color: var(--c-black);
-      text-transform: lowercase;
-      user-select: none;
+      width: clamp(200px, 60vw, 600px);
+      height: auto;
+      display: block;
     }
 
     .hero-tagline {
@@ -335,17 +326,9 @@
 
     .footer-logo {
       grid-area: logo;
-      /*
-       * TODO — Remplacer par :
-       * <img src="assets/kafe-wordmark.svg" alt="Kafé" class="footer-logo">
-       */
-      font-weight: 900;
-      font-size: clamp(64px, 20vw, 200px);
-      letter-spacing: -0.04em;
-      line-height: 0.85;
-      text-transform: lowercase;
-      color: var(--c-black);
-      user-select: none;
+      width: clamp(160px, 50vw, 500px);
+      height: auto;
+      display: block;
     }
 
     /* ═══ Responsive ═══ */
@@ -362,7 +345,7 @@
 
   <!-- HERO ─────────────────────────────── -->
   <section class="s-hero">
-    <div class="hero-logo">kaf<span>é</span></div>
+    <img src="assets/kafe-wordmark.png" alt="Kafé" class="hero-logo">
     <p class="hero-tagline">Serendipity Coffee &amp; Triangles</p>
   </section>
 
@@ -447,7 +430,7 @@
       <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
       <a href="mailto:hello@kafe.paris">Contact us</a>
     </div>
-    <div class="footer-logo" aria-label="Kafé">kaf<span>é</span></div>
+    <img src="assets/kafe-wordmark.png" alt="Kafé" class="footer-logo">
   </footer>
 
   <script>
