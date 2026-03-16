@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ═══════════════════════════════════════
+       SEO
+  ═══════════════════════════════════════ -->
+  <title>Kafé — Serendipity Coffee & Triangles · Paris 10e</title>
+  <meta name="description" content="Kafé, café de quartier au 12 rue Martel, Paris 10e. Coffee, sweets, triangles. Rejoignez notre programme de fidélité et obtenez votre café offert à l'ouverture.">
+  <meta name="keywords" content="café paris, coffee paris 10, kafé, rue martel, fidélité, loyalty card">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://kafe.paris">
+
+  <!-- Open Graph / partage réseaux sociaux -->
+  <meta property="og:title" content="Kafé — Serendipity Coffee & Triangles">
+  <meta property="og:description" content="Café de quartier au cœur du 10e. Coffee, sweets & triangles.">
+  <meta property="og:url" content="https://kafe.paris">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- QR Code -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       DESIGN SYSTEM
+       Toutes les valeurs modifiables sont ici.
+       Changer une variable = changer sur toute la page.
+    ═══════════════════════════════════════════════════════════ */
+    :root {
+      /* Palette */
+      --c-sage:   #7a9e8f;   /* vert sauge  — hero, footer       */
+      --c-clay:   #9b8070;   /* marron clay — section membership  */
+      --c-red:    #d93535;   /* rouge       — section food        */
+      --c-blush:  #f0b8a4;   /* rose        — section coffee      */
+      --c-sand:   #efd78a;   /* sable/jaune — section drinks      */
+      --c-cream:  #e5dfcf;   /* crème       — section triangles   */
+      --c-black:  #1a1916;   /* noir profond                      */
+      --c-white:  #ffffff;
+
+      /* Typographie */
+      --f-display: 'DM Sans', sans-serif;
+      --f-mono:    'DM Mono', monospace;
+
+      /* Espacement sections */
+      --pad: clamp(40px, 8vw, 100px);
+
+      /* Transitions */
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ═══ Reset ═══ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--f-display); color: var(--c-black); overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ═══════════════════════════════════════════════════════════
+       HERO — Vert sauge, logo géant
+    ═══════════════════════════════════════════════════════════ */
+    .s-hero {
+      background: var(--c-sage);
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--pad);
+      text-align: center;
+    }
+
+    .hero-logo {
+      /*
+       * TODO — Remplacer par le vrai asset SVG :
+       * <img src="assets/kafe-wordmark.svg" alt="Kafé" class="hero-logo">
+       */
+      font-family: var(--f-display);
+      font-weight: 900;
+      font-size: clamp(88px, 26vw, 260px);
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: var(--c-black);
+      text-transform: lowercase;
+      user-select: none;
+    }
+
+    .hero-tagline {
+      font-weight: 400;
+      font-size: clamp(14px, 2.2vw, 20px);
+      letter-spacing: 0.02em;
+      color: var(--c-black);
+      margin-top: clamp(20px, 4vw, 36px);
+      opacity: 0.75;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       MANIFESTE — Eat / Drink / Meet
+    ═══════════════════════════════════════════════════════════ */
+    .s-manifesto {
+      background: var(--c-white);
+      min-height: 60svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--pad);
+    }
+
+    .manifesto-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .manifesto-list span {
+      font-weight: 700;
+      font-size: clamp(52px, 13vw, 128px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTIONS AVEC WATERMARK — mixin partagé
+    ═══════════════════════════════════════════════════════════ */
+    .s-watermark {
+      min-height: 50svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--pad);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .s-watermark .wm {
+      /*
+       * TODO — Remplacer par <img src="assets/FOOD.png" class="wm" alt="">
+       * ou laisser le texte CSS pour un rendu propre en attendant
+       */
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: clamp(130px, 38vw, 420px);
+      letter-spacing: -0.05em;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .s-watermark .label {
+      position: relative;
+      z-index: 1;
+      font-weight: 700;
+      font-size: clamp(32px, 8vw, 80px);
+      letter-spacing: -0.02em;
+    }
+
+    /* FOOD — rouge */
+    .s-food { background: var(--c-red); }
+    .s-food .wm  { color: rgba(255,255,255,0.15); }
+    .s-food .label { color: var(--c-white); }
+
+    /* DRINKS — sable */
+    .s-drinks { background: var(--c-sand); }
+    .s-drinks .wm  { color: rgba(255,255,255,0.45); }
+    .s-drinks .label { color: var(--c-black); }
+
+    /* COFFEE — rose */
+    .s-coffee { background: var(--c-blush); }
+    .s-coffee .wm  { color: rgba(255,255,255,0.38); }
+    .s-coffee .label { color: var(--c-black); }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECTIONS SIMPLES
+    ═══════════════════════════════════════════════════════════ */
+    .s-simple {
+      min-height: 38svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--pad);
+    }
+
+    .s-simple .label {
+      font-weight: 700;
+      font-size: clamp(32px, 8vw, 80px);
+      letter-spacing: -0.02em;
+    }
+
+    .s-triangles { background: var(--c-cream); }
+    .s-triangles .label { font-weight: 400; }
+
+    .s-sweets    { background: var(--c-white); }
+    .s-not-coffee { background: var(--c-white); }
+
+    /* ═══════════════════════════════════════════════════════════
+       MEMBERSHIP — Clay, QR + perks + CTA
+    ═══════════════════════════════════════════════════════════ */
+    .s-membership {
+      background: var(--c-clay);
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--pad);
+      text-align: center;
+      gap: clamp(28px, 5vw, 52px);
+    }
+
+    /* QR — en premier pour être "remonté" */
+    .qr-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qr-box {
+      background: var(--c-white);
+      padding: 16px;
+      border-radius: 14px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+      display: inline-block;
+    }
+
+    /* QRCode.js génère canvas + img — on cache le canvas */
+    #qr canvas { display: none !important; }
+    #qr img    { display: block !important; width: 160px !important; height: 160px !important; }
+
+    .qr-hint {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Texte */
+    .m-eyebrow {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .m-headline {
+      font-weight: 700;
+      font-size: clamp(28px, 6vw, 64px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--c-white);
+      max-width: 580px;
+    }
+
+    .m-perks {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .m-perks li {
+      font-size: clamp(15px, 2.5vw, 20px);
+      color: var(--c-white);
+      opacity: 0.88;
+      letter-spacing: 0.01em;
+    }
+
+    /* Bouton JOIN NOW */
+    .btn-join {
+      display: inline-block;
+      font-weight: 700;
+      font-size: clamp(18px, 4vw, 26px);
+      letter-spacing: -0.01em;
+      color: var(--c-black);
+      background: var(--c-white);
+      padding: clamp(16px, 3vw, 22px) clamp(36px, 7vw, 72px);
+      border: 3px solid var(--c-black);
+      transition: background 0.25s var(--ease), color 0.25s var(--ease);
+      cursor: pointer;
+    }
+
+    .btn-join:hover {
+      background: var(--c-black);
+      color: var(--c-white);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       FOOTER — Vert sauge
+    ═══════════════════════════════════════════════════════════ */
+    .s-footer {
+      background: var(--c-sage);
+      padding: clamp(40px, 8vw, 80px) var(--pad) clamp(32px, 6vw, 60px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "info links"
+        "logo logo";
+      gap: clamp(32px, 5vw, 60px);
+      align-items: start;
+    }
+
+    .footer-info {
+      grid-area: info;
+      font-family: var(--f-mono);
+      font-size: 13px;
+      line-height: 1.9;
+      opacity: 0.8;
+    }
+
+    .footer-links {
+      grid-area: links;
+      font-family: var(--f-mono);
+      font-size: 13px;
+      line-height: 1.9;
+      text-align: right;
+    }
+
+    .footer-links a {
+      display: block;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .footer-links a:hover { opacity: 1; }
+
+    .footer-logo {
+      grid-area: logo;
+      /*
+       * TODO — Remplacer par :
+       * <img src="assets/kafe-wordmark.svg" alt="Kafé" class="footer-logo">
+       */
+      font-weight: 900;
+      font-size: clamp(64px, 20vw, 200px);
+      letter-spacing: -0.04em;
+      line-height: 0.85;
+      text-transform: lowercase;
+      color: var(--c-black);
+      user-select: none;
+    }
+
+    /* ═══ Responsive ═══ */
+    @media (max-width: 560px) {
+      .s-footer {
+        grid-template-columns: 1fr;
+        grid-template-areas: "info" "links" "logo";
+      }
+      .footer-links { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO ─────────────────────────────── -->
+  <section class="s-hero">
+    <div class="hero-logo">kaf<span>é</span></div>
+    <p class="hero-tagline">Serendipity Coffee &amp; Triangles</p>
+  </section>
+
+  <!-- MANIFESTE ────────────────────────── -->
+  <section class="s-manifesto">
+    <div class="manifesto-list">
+      <span>Eat</span>
+      <span>Drink</span>
+      <span>Meet</span>
+    </div>
+  </section>
+
+  <!-- FOOD ─────────────────────────────── -->
+  <section class="s-watermark s-food">
+    <div class="wm" aria-hidden="true">FOOD</div>
+    <!-- TODO: <img src="assets/food-designed.png" class="wm" alt=""> -->
+    <span class="label">Food</span>
+  </section>
+
+  <!-- TRIANGLES ────────────────────────── -->
+  <section class="s-simple s-triangles">
+    <span class="label">Triangles</span>
+  </section>
+
+  <!-- DRINKS ───────────────────────────── -->
+  <section class="s-watermark s-drinks">
+    <div class="wm" aria-hidden="true">DRINKS</div>
+    <!-- TODO: <img src="assets/drinks-designed.png" class="wm" alt=""> -->
+    <span class="label">Drinks</span>
+  </section>
+
+  <!-- SWEETS ───────────────────────────── -->
+  <section class="s-simple s-sweets">
+    <span class="label">Sweets</span>
+  </section>
+
+  <!-- COFFEE ───────────────────────────── -->
+  <section class="s-watermark s-coffee">
+    <div class="wm" aria-hidden="true">COFFEE</div>
+    <span class="label">Coffee</span>
+  </section>
+
+  <!-- NOT COFFEE ───────────────────────── -->
+  <section class="s-simple s-not-coffee">
+    <span class="label">Not Coffee</span>
+  </section>
+
+  <!-- MEMBERSHIP ───────────────────────── -->
+  <section class="s-membership">
+
+    <!-- QR code permanent → crée une nouvelle carte 5% à chaque scan -->
+    <div class="qr-wrap">
+      <div class="qr-box">
+        <div id="qr"></div>
+      </div>
+      <p class="qr-hint">Scanner pour rejoindre</p>
+    </div>
+
+    <p class="m-eyebrow">Programme fidélité</p>
+
+    <h2 class="m-headline">Join the lucky ones at Kafé.</h2>
+
+    <ul class="m-perks">
+      <li>−5% sur chaque commande</li>
+      <li>Year long rewards</li>
+      <li>Opening Event Invitation</li>
+      <li>A chance to win your daily coffee free for 1 year</li>
+    </ul>
+
+    <a href="join.html" class="btn-join">JOIN NOW</a>
+
+  </section>
+
+  <!-- FOOTER ───────────────────────────── -->
+  <footer class="s-footer">
+    <div class="footer-info">
+      12, rue Martel 75010<br>
+      Monday to Friday<br>
+      8am – 6pm
+    </div>
+    <div class="footer-links">
+      <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:hello@kafe.paris">Contact us</a>
+    </div>
+    <div class="footer-logo" aria-label="Kafé">kaf<span>é</span></div>
+  </footer>
+
+  <script>
+    // QR permanent → pointe vers /join.html
+    // Chaque scan = nouvelle carte 5% créée à la volée, sans expiration du QR
+    const joinUrl = window.location.origin + '/join.html';
+    new QRCode(document.getElementById('qr'), {
+      text: joinUrl,
+      width: 160,
+      height: 160,
+      colorDark:  '#1a1916',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  </script>
+
+</body>
+</html>

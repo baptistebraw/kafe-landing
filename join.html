@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafé — Rejoindre le programme</title>
+  <meta name="robots" content="noindex"> <!-- page d'activation, pas à indexer -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,700;9..40,900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* ══ Design system — même variables que index.html ══ */
+    :root {
+      --c-sage:   #7a9e8f;
+      --c-clay:   #9b8070;
+      --c-black:  #1a1916;
+      --c-white:  #ffffff;
+      --c-bg:     #f5f1ea;
+      --c-border: #e2ddd5;
+      --c-muted:  #8a857c;
+      --f-display: 'DM Sans', sans-serif;
+      --f-mono:    'DM Mono', monospace;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--c-bg);
+      color: var(--c-black);
+      font-family: var(--f-display);
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* Logo */
+    .logo {
+      font-weight: 900;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+      text-transform: lowercase;
+      color: var(--c-black);
+      margin-bottom: 40px;
+      text-decoration: none;
+    }
+
+    /* Card container */
+    .card {
+      background: var(--c-white);
+      border: 1px solid var(--c-border);
+      border-radius: 14px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* States */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    /* ══ State: form ══ */
+    .form-eyebrow {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      margin-bottom: 10px;
+    }
+
+    .form-title {
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--c-muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* Carte preview */
+    .card-preview {
+      background: var(--c-sage);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .preview-left .preview-brand {
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+      text-transform: lowercase;
+      color: var(--c-black);
+    }
+
+    .preview-left .preview-tier {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.55);
+      margin-top: 2px;
+    }
+
+    .preview-right .preview-discount {
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+      color: var(--c-black);
+    }
+
+    /* Form fields */
+    .field { margin-bottom: 16px; }
+
+    .field label {
+      display: block;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      margin-bottom: 6px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--c-border);
+      border-radius: 8px;
+      background: var(--c-bg);
+      color: var(--c-black);
+      font-family: var(--f-display);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus {
+      border-color: var(--c-black);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--c-black);
+      color: var(--c-white);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--f-display);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ══ State: loading ══ */
+    .loading-text {
+      text-align: center;
+      padding: 24px 0;
+      color: var(--c-muted);
+      font-family: var(--f-mono);
+      font-size: 13px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ══ State: success ══ */
+    .success-card {
+      background: var(--c-sage);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .success-card .s-brand {
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+      text-transform: lowercase;
+    }
+
+    .success-card .s-name {
+      font-family: var(--f-mono);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      margin-top: 12px;
+      opacity: 0.7;
+    }
+
+    .success-card .s-discount {
+      font-weight: 700;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      margin-top: 8px;
+    }
+
+    .success-title {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .success-sub {
+      font-size: 14px;
+      color: var(--c-muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .btn-wallet {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      background: var(--c-black);
+      color: var(--c-white);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--f-display);
+      font-weight: 700;
+      font-size: 14px;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 10px;
+    }
+
+    .btn-back {
+      display: block;
+      text-align: center;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      color: var(--c-muted);
+      margin-top: 16px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .btn-back:hover { color: var(--c-black); }
+
+    /* ══ State: error ══ */
+    .error-icon { font-size: 32px; margin-bottom: 10px; }
+    .error-title {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .error-msg {
+      font-size: 14px;
+      color: var(--c-muted);
+      line-height: 1.5;
+    }
+
+    /* ══ Already joined ══ */
+    .already-icon { font-size: 32px; margin-bottom: 10px; }
+    .already-title {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .already-msg {
+      font-size: 14px;
+      color: var(--c-muted);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="logo">kafé</a>
+
+  <div class="card">
+
+    <!-- ── Formulaire ── -->
+    <div id="s-form" class="state active">
+      <p class="form-eyebrow">Programme fidélité</p>
+      <h1 class="form-title">Rejoindre Kafé</h1>
+      <p class="form-subtitle">Créez votre carte membre et bénéficiez de −5% à chaque visite.</p>
+
+      <!-- Aperçu carte -->
+      <div class="card-preview">
+        <div class="preview-left">
+          <div class="preview-brand">kafé</div>
+          <div class="preview-tier">MEMBER</div>
+        </div>
+        <div class="preview-right">
+          <div class="preview-discount">−5%</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="firstname">Prénom</label>
+        <input type="text" id="firstname" placeholder="Marie" autocomplete="given-name">
+      </div>
+      <div class="field">
+        <label for="lastname">Nom</label>
+        <input type="text" id="lastname" placeholder="Dupont" autocomplete="family-name">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="marie@exemple.com" autocomplete="email">
+      </div>
+
+      <button class="btn-submit" id="submit-btn" onclick="createCard()">
+        Obtenir ma carte →
+      </button>
+    </div>
+
+    <!-- ── Chargement ── -->
+    <div id="s-loading" class="state">
+      <p class="loading-text">Création de votre carte en cours...</p>
+    </div>
+
+    <!-- ── Succès ── -->
+    <div id="s-success" class="state">
+      <div class="success-card" id="success-card-preview">
+        <div class="s-brand">kafé</div>
+        <div class="s-name" id="s-name"></div>
+        <div class="s-discount">−5%</div>
+      </div>
+      <p class="success-title">Carte créée ! 🎉</p>
+      <p class="success-sub">Votre carte membre est prête. Ajoutez-la à votre wallet pour l'avoir toujours avec vous.</p>
+      <a id="wallet-btn" href="#" class="btn-wallet" style="display:none">
+        Ajouter à Apple Wallet
+      </a>
+      <a href="index.html" class="btn-back">← Retour à l'accueil</a>
+    </div>
+
+    <!-- ── Déjà inscrit ── -->
+    <div id="s-already" class="state">
+      <div class="already-icon">👋</div>
+      <p class="already-title">Vous êtes déjà membre !</p>
+      <p class="already-msg">Un compte existe déjà avec cet email. Vérifiez votre wallet ou contactez-nous.</p>
+      <a href="index.html" class="btn-back" style="margin-top:20px">← Retour</a>
+    </div>
+
+    <!-- ── Erreur ── -->
+    <div id="s-error" class="state">
+      <div class="error-icon">✕</div>
+      <p class="error-title">Une erreur est survenue</p>
+      <p class="error-msg" id="error-msg">Veuillez réessayer ou contacter hello@kafe.paris</p>
+      <a href="join.html" class="btn-back" style="margin-top:20px">← Réessayer</a>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ══ Config Supabase ══
+    // Remplacer par les vraies clés (même que kafe-loyalty)
+    const SUPABASE_URL  = 'https://hnnqbcfmoppcspewchxh.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhubnhxb2NmbW9wcGNzcGV3Y2h4aCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzQ1ODQ3MjcwLCJleHAiOjIwNjE0MjMyNzB9.dummy'; // ← remplacer
+
+    const { createClient } = supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    function showState(id) {
+      document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    async function createCard() {
+      const firstname = document.getElementById('firstname').value.trim();
+      const lastname  = document.getElementById('lastname').value.trim();
+      const email     = document.getElementById('email').value.trim();
+
+      if (!firstname || !lastname || !email) {
+        alert('Merci de renseigner tous les champs.');
+        return;
+      }
+
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      showState('s-loading');
+
+      try {
+        // Vérifier si l'email existe déjà
+        const { data: existing } = await sb
+          .from('loyalty_cards')
+          .select('id')
+          .eq('client_email', email)
+          .single();
+
+        if (existing) {
+          showState('s-already');
+          return;
+        }
+
+        // Appeler l'Edge Function qui crée + active la carte
+        const resp = await fetch(`${SUPABASE_URL}/functions/v1/create-member-card`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_ANON}`
+          },
+          body: JSON.stringify({ firstname, lastname, email })
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err.error || 'Erreur serveur');
+        }
+
+        const { pkpass } = await resp.json();
+
+        // Afficher succès
+        document.getElementById('s-name').textContent =
+          `${firstname} ${lastname}`.toUpperCase();
+
+        // Proposer le téléchargement Wallet si pkpass disponible
+        if (pkpass) {
+          const binary = atob(pkpass);
+          const bytes  = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+          const blob   = new Blob([bytes], { type: 'application/vnd.apple.pkpass' });
+          const url    = URL.createObjectURL(blob);
+          const btn    = document.getElementById('wallet-btn');
+          btn.href     = url;
+          btn.download = 'kafe-member.pkpass';
+          btn.style.display = 'block';
+        }
+
+        showState('s-success');
+
+      } catch (e) {
+        document.getElementById('error-msg').textContent =
+          e.message || 'Veuillez réessayer ou contacter hello@kafe.paris';
+        showState('s-error');
+      }
+    }
+  </script>
+
+</body>
+</html>
