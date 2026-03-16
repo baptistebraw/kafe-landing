@@ -464,7 +464,9 @@
           throw new Error(err.error || 'Erreur serveur');
         }
 
-        const { pkpass, code } = await resp.json();
+        const data = await resp.json();
+        const { pkpass, code, walletError } = data;
+        if (walletError) console.error('WalletWallet:', walletError);
 
         // Afficher nom
         document.getElementById('s-name').textContent =
