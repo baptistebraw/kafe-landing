@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,700;9..40,900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
   <style>
     /* ══ Design system — même variables que index.html ══ */
@@ -244,6 +245,35 @@
       margin-bottom: 10px;
     }
 
+    /* card layout avec QR */
+    .success-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .s-card-left { flex: 1; }
+    .s-card-qr {
+      background: white;
+      border-radius: 8px;
+      padding: 8px;
+      flex-shrink: 0;
+    }
+    #success-qr canvas { display: none !important; }
+    #success-qr img { display: block; width: 80px !important; height: 80px !important; }
+
+    .btn-google {
+      background: white;
+      color: var(--c-black);
+      border: 1.5px solid var(--c-black);
+    }
+    .wallet-fallback {
+      font-size: 13px;
+      color: var(--c-muted);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
     .btn-back {
       display: block;
       text-align: center;
@@ -335,15 +365,26 @@
     <!-- ── Succès ── -->
     <div id="s-success" class="state">
       <div class="success-card" id="success-card-preview">
-        <div class="s-brand">kafé</div>
-        <div class="s-name" id="s-name"></div>
-        <div class="s-discount">−5%</div>
+        <div class="s-card-left">
+          <div class="s-brand">kafé</div>
+          <div class="s-name" id="s-name"></div>
+          <div class="s-discount">−5%</div>
+        </div>
+        <div class="s-card-qr">
+          <div id="success-qr"></div>
+        </div>
       </div>
       <p class="success-title">Carte créée ! 🎉</p>
-      <p class="success-sub">Votre carte membre est prête. Ajoutez-la à votre wallet pour l'avoir toujours avec vous.</p>
-      <a id="wallet-btn" href="#" class="btn-wallet" style="display:none">
-        Ajouter à Apple Wallet
+      <p class="success-sub">Ajoutez-la à votre wallet — elle sera toujours dans votre poche.</p>
+      <a id="apple-btn" href="#" class="btn-wallet btn-apple" style="display:none">
+        🍎 &nbsp;Ajouter à Apple Wallet
       </a>
+      <a id="google-btn" href="#" class="btn-wallet btn-google" target="_blank" style="display:none">
+        Ajouter à Google Wallet
+      </a>
+      <p id="wallet-fallback" class="wallet-fallback" style="display:none">
+        Montrez ce QR code lors de votre prochaine visite.
+      </p>
       <a href="index.html" class="btn-back">← Retour à l'accueil</a>
     </div>
 
@@ -366,6 +407,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script>
     // ══ Config Supabase ══
     // Remplacer par les vraies clés (même que kafe-loyalty)
@@ -422,23 +464,34 @@
           throw new Error(err.error || 'Erreur serveur');
         }
 
-        const { pkpass } = await resp.json();
+        const { pkpass, code } = await resp.json();
 
-        // Afficher succès
+        // Afficher nom
         document.getElementById('s-name').textContent =
           `${firstname} ${lastname}`.toUpperCase();
 
-        // Proposer le téléchargement Wallet si pkpass disponible
+        // QR code de la carte
+        new QRCode(document.getElementById('success-qr'), {
+          text: code,
+          width: 80, height: 80,
+          colorDark: '#1a1916',
+          colorLight: '#7a9e8f',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+
+        // Apple Wallet
         if (pkpass) {
           const binary = atob(pkpass);
           const bytes  = new Uint8Array(binary.length);
           for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-          const blob   = new Blob([bytes], { type: 'application/vnd.apple.pkpass' });
-          const url    = URL.createObjectURL(blob);
-          const btn    = document.getElementById('wallet-btn');
-          btn.href     = url;
-          btn.download = 'kafe-member.pkpass';
-          btn.style.display = 'block';
+          const blob = new Blob([bytes], { type: 'application/vnd.apple.pkpass' });
+          const appleBtn = document.getElementById('apple-btn');
+          appleBtn.href = URL.createObjectURL(blob);
+          appleBtn.download = 'kafe-membre.pkpass';
+          appleBtn.style.display = 'block';
+        } else {
+          // Fallback si WalletWallet indisponible
+          document.getElementById('wallet-fallback').style.display = 'block';
         }
 
         showState('s-success');
