@@ -437,18 +437,6 @@
       showState('s-loading');
 
       try {
-        // Vérifier si l'email existe déjà
-        const { data: existing } = await sb
-          .from('loyalty_cards')
-          .select('id')
-          .eq('client_email', email)
-          .single();
-
-        if (existing) {
-          showState('s-already');
-          return;
-        }
-
         // Appeler l'Edge Function qui crée + active la carte
         const resp = await fetch(`${SUPABASE_URL}/functions/v1/create-member-card`, {
           method: 'POST',
@@ -461,6 +449,10 @@
 
         if (!resp.ok) {
           const err = await resp.json().catch(() => ({}));
+          if (resp.status === 409 || err.error === 'email_exists') {
+            showState('s-already');
+            return;
+          }
           throw new Error(err.error || 'Erreur serveur');
         }
 
